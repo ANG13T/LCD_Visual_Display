@@ -110,23 +110,22 @@ void setNextLetter(int row, int index){
   }
 
   letterIndex = getLetterIndex(currentLetter);
-  Serial.print("letter index: ");
-  Serial.print(letterIndex);
-  Serial.println("");
+  int result;
   if(letterIndex + 1 < sizeof(codeArray)){
-    Serial.println(codeArray[letterIndex + 1]);
-    topRow[index] = codeArray[letterIndex + 1];
-    lcd.print(codeArray[letterIndex + 1]);
+    result = letterIndex + 1;
   }else{
-    lcd.print(codeArray[0]);
-    topRow[index] = codeArray[0];
-  }  
+    result = 0;
+  }
+
+  lcd.print(codeArray[result]);
+  if(row == 0){
+    topRow[index] = codeArray[result];
+  }else{
+    bottomRow[index] = codeArray[result];
+  }
 }
 
 int getLetterIndex(char letter){
-  Serial.print("getting letter: ");
-  Serial.print(letter);
-  Serial.println("");
   for(int i = 0; i < sizeof(codeArray); i++){
       if(codeArray[i] == letter){
           return i;
