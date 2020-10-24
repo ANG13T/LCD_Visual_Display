@@ -13,7 +13,7 @@ LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 20, 4);
 
 char codeArray[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' '};
 char topRow[16];
-char bottom[16];
+char bottomRow[16];
 
 
 void setup() {
@@ -29,16 +29,12 @@ void setup() {
 }
 
 void loop() {
-  Serial.print("cursor: ");
-  Serial.print(cursorX);
-  Serial.print(" , ");
-  Serial.print(cursorY);
-  Serial.println();
   lcd.setCursor(cursorX, cursorY); // Set the cursor on the first column and first row.
   lcd.blink();
   int joyStickDirection = getJoystickValue(analogRead(X_pin), analogRead(Y_pin));
-  moveCursor(joyStickDirection);'
+  moveCursor(joyStickDirection);
   if(digitalRead(buttonPin) == HIGH){
+    Serial.println("clicked button");
     setNextLetter(cursorY, cursorX);
   }
   delay(200);
@@ -104,10 +100,30 @@ void intitializeBoard(){
 }
 
 void setNextLetter(int row, int index){
+  char currentLetter;
+  int letterIndex;
+  Serial.println("setting letter");
   lcd.setCursor(index, row);
-  if(index + 1 < codeArray.length){
-    lcd.print(codeArray[index + 1]);
+  if(row == 0){
+    currentLetter = topRow[index];
+  }else{
+    currentLetter = bottomRow[index];
+  }
+
+  letterIndex = getLetterIndex(currentLetter);
+  if(letterIndex + 1 < sizeof(codeArray)){
+    Serial.println(codeArray[letterIndex + 1]);
+    lcd.print(codeArray[letterIndex + 1]);
   }else{
     lcd.print(codeArray[0]);
   }  
+}
+
+int getLetterIndex(char letter){
+  for(int i = 0; i < sizeof(codeArray); i++){
+      if(codeArray[i] == letter){
+          return i;
+       }
+   }
+  return -1;
 }
