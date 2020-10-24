@@ -11,8 +11,9 @@ int cursorY = 0;
 
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 20, 4);
 
-char codeArray[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', '.', '!'};
- char message[] = "Hello";
+char codeArray[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' '};
+char topRow[16];
+char bottom[16];
 
 
 void setup() {
@@ -23,6 +24,8 @@ void setup() {
   Serial.begin(9600);
   lcd.init();
   lcd.backlight();
+  intitializeBoard();
+  
 }
 
 void loop() {
@@ -33,20 +36,12 @@ void loop() {
   Serial.println();
   lcd.setCursor(cursorX, cursorY); // Set the cursor on the first column and first row.
   lcd.blink();
-//  lcd.print("Hello World!");
-  // put your main code here, to run repeatedly:
-//  Serial.print("Switch:  ");
-//  Serial.print(digitalRead(SW_pin));
-//  Serial.print("\n");
-//  Serial.print("X-axis: ");
-//  Serial.print(analogRead(X_pin));
-//  Serial.print("\n");
-//  Serial.print("Y-axis: ");
-//  Serial.println(analogRead(Y_pin));
-//  Serial.print("\n\n");
-    int joyStickDirection = getJoystickValue(analogRead(X_pin), analogRead(Y_pin));
-    moveCursor(joyStickDirection);
-    delay(400);
+  int joyStickDirection = getJoystickValue(analogRead(X_pin), analogRead(Y_pin));
+  moveCursor(joyStickDirection);'
+  if(digitalRead(buttonPin) == HIGH){
+    setNextLetter(cursorY, cursorX);
+  }
+  delay(200);
 }
 
 int getJoystickValue(int xValue, int yValue){
@@ -95,4 +90,24 @@ void moveCursor(int direction){
       case 4:
       break;
    }
+}
+
+
+void intitializeBoard(){
+  for(int i = 0; i < 2; i++){
+    for(int j = 0; j < 16; j++){
+      lcd.setCursor(i, j);
+      lcd.print("");
+    }
+  }
+ lcd.setCursor(0, 0);
+}
+
+void setNextLetter(int row, int index){
+  lcd.setCursor(index, row);
+  if(index + 1 < codeArray.length){
+    lcd.print(codeArray[index + 1]);
+  }else{
+    lcd.print(codeArray[0]);
+  }  
 }
