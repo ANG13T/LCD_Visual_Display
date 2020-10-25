@@ -15,7 +15,7 @@ const int lightsPin = 5;
 int cursorX = 0;
 int cursorY = 0;
 
-boolean lightsOn = false;
+boolean displayON = false;
 
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 20, 4);
 
@@ -43,23 +43,31 @@ void setup() {
 }
 
 void loop() {
-  lcd.setCursor(cursorX, cursorY); // Set the cursor on the first column and first row.
-  lcd.blink();
-  if(lightsOn){
+  if(displayON){
+    lcd.noBlink();
     digitalWrite(lightsPin, HIGH);
+    lcd.scrollDisplayLeft();
+    delay(150);
   }else{
     digitalWrite(lightsPin, LOW);
-  }
-  int joyStickDirection = getJoystickValue(analogRead(X_pin), analogRead(Y_pin));
-  moveCursor(joyStickDirection);
-  if (digitalRead(buttonPin) == HIGH) {
-    Serial.println("clicked button");
-    setNextLetter(cursorY, cursorX);
+    lcd.setCursor(cursorX, cursorY); // Set the cursor on the first column and first row.
+    lcd.blink();
+    int joyStickDirection = getJoystickValue(analogRead(X_pin), analogRead(Y_pin));
+    moveCursor(joyStickDirection);
+    if (digitalRead(buttonPin) == HIGH) {
+      Serial.println("clicked button");
+      setNextLetter(cursorY, cursorX);
+    }
   }
 
   if (receiver.decode(&results)) {
-    Serial.println(results.value, HEX);
-    lightsOn = !lightsOn;
+    Serial.println(results.value);
+    if(results.value == 4382025){
+      displayON = !displayON;
+      if(displayON == false){
+        resetBoard();
+      }
+    }
     receiver.resume();
   }
   delay(200);
@@ -122,6 +130,20 @@ void intitializeBoard() {
     }
   }
   lcd.setCursor(0, 0);
+}
+
+void resetBoard(){
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 16; j++) {
+      lcd.setCursor(i, j);
+      if(i == 0){
+        lcd.print(topRow[j]);
+      }else{
+        lcd.print(bottomRow[j]);
+      }
+    }
+  }
+  lcd.setCursor(cursorX, cursorY);
 }
 
 void setNextLetter(int row, int index) {
