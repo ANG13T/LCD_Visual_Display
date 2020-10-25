@@ -16,7 +16,7 @@ This projects allows you to write your own custom message on a LCD display. The 
 
 ## Schematic (excluding LCD and Joystick)
 
-![design image](https://github.com/angelina-tsuboi/Object_Detector_Arduino/blob/main/images/design.png)
+![design image](https://github.com/angelina-tsuboi/LCD_Visual_Display/blob/main/images/base_design.png)
 
 The CAD I was using didn't have the LCD (I2C) and Joystick. Wiring those two components should be pretty simple as long as you look over the source code.
 
@@ -42,4 +42,4 @@ The goal of the joystick is to indicate a 2D motion to the Arduino. In order to 
 
 ## Completed Project
 
-![project photo](https://github.com/angelina-tsuboi/Object_Detector_Arduino/blob/main/images/photo.jpg)
+![project photo](https://github.com/angelina-tsuboi/LCD_Visual_Display/blob/main/images/completed-project.jpg)
